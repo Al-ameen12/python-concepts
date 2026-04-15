@@ -291,13 +291,38 @@ x = 90
 # web browsing in python
 # Stopped at 06:43:35
 
+'''
+s1:
+AF_INET — means you're communicating over the internet (IPv4)
+SOCK_STREAM — means you want a reliable two-way connection (like a phone call, not a walkie talkie)
+
+s2:
+data.pr4e.org — the server address
+80 — the port number. Port 80 is the standard door for HTTP web traffic. Think of ports like different doors on the same building.
+
+s3:
+Prepares your request as bytes — "give me this file" in a language the server understands.
+
+s5:
+while True — keep looping forever until told to stop
+mysock.recv(512) — receive up to 512 bytes of data at a time from the server. The server sends data in chunks, not all at once
+if len(data) < 1: break — if the chunk received is empty, the server is done talking, so stop the loop
+print(data.decode()) — convert the bytes back to a readable string and print it
+
+Think of it like receiving a long message in pieces — you keep reading until there's nothing left.
+'''
 import socket
 
+# Creates the socket — think of this as manufacturing the phone before making a call.
 mysock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-mysock.connect(('data.pr4e.org', 80)) # opened a connection to a server
-cmd = 'GET http://data.pr4e.org/romeo.txt HTTP/1.0\r\n\r\n'.encode() # asked for a file, and the server sent back information about the file
-mysock.send(cmd)
 
+# s2. Connects the socket to the server
+mysock.connect(('data.pr4e.org', 80)) # opened a connection to a server
+# s3. prepares request as bytes
+cmd = 'GET http://data.pr4e.org/romeo.txt HTTP/1.0\r\n\r\n'.encode() # asked for a file, and the server sent back information about the file
+# s4. sends the request to the server
+mysock.send(cmd)
+# s5. 
 while True:
     data = mysock.recv(512)
     if (len(data) < 1):
