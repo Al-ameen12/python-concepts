@@ -39,6 +39,11 @@
 # Chapter 12: Networked Programs 06:23:00
             # socket programming
             # web browsing in python
+            # q: is cmd is what datatype?
+            # characters and string
+            # urllib
+            # html parsing - Web Scraping
+            # urllinks
 
 
 
@@ -289,7 +294,6 @@ x = 90
 # Currently at 06:21:00 
 
 # web browsing in python
-# Stopped at 06:43:35
 
 '''
 s1:
@@ -311,21 +315,64 @@ print(data.decode()) — convert the bytes back to a readable string and print i
 
 Think of it like receiving a long message in pieces — you keep reading until there's nothing left.
 '''
-import socket
+# import socket
 
-# Creates the socket — think of this as manufacturing the phone before making a call.
-mysock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# # Creates the socket — think of this as manufacturing the phone before making a call.
+# mysock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-# s2. Connects the socket to the server
-mysock.connect(('data.pr4e.org', 80)) # opened a connection to a server
-# s3. prepares request as bytes
-cmd = 'GET http://data.pr4e.org/romeo.txt HTTP/1.0\r\n\r\n'.encode() # asked for a file, and the server sent back information about the file
-# s4. sends the request to the server
-mysock.send(cmd)
-# s5. 
-while True:
-    data = mysock.recv(512)
-    if (len(data) < 1):
-        break
-    print(data.decode())
-mysock.close()
+# # s2. Connects the socket to the server
+# mysock.connect(('data.pr4e.org', 80)) # opened a connection to a server
+# # s3. prepares request as bytes
+# cmd = 'GET http://data.pr4e.org/romeo.txt HTTP/1.0\r\n\r\n'.encode() # asked for a file, and the server sent back information about the file
+# # s4. sends the request to the server
+# mysock.send(cmd)
+# # s5. 
+# while True:
+#     data = mysock.recv(512)
+#     if (len(data) < 1):
+#         break
+#     print(data.decode())
+# mysock.close()
+
+# Currently at 06:44:00
+# print(type(cmd))
+
+
+# Characters and String
+# Ord is used to check the ASCII of a character
+# print(ord(" "))
+
+
+# urllib
+'''a library that does all socket work for us and makes web pages look like a file'''
+import urllib.request, urllib.parse, urllib.error
+
+# fhand = urllib.request.urlopen('http://data.pr4e.org/romeo.txt')
+# for line in fhand:
+#     print(line.decode().strip())
+
+
+# Like a file...
+# fhand = urllib.request.urlopen('https://keep.google.com/#home')
+
+# counts = {}
+# for line in fhand:
+#     words = line.decode().split()
+#     for word in words:
+#         counts[word] = counts.get(word, 0) + 1
+# print(counts)
+
+
+# HTML parsing - Web Scraping
+# Currently at 07:18:28
+
+
+# from bs4 import BeautifulSoup
+# url = 'https://www.vanguardngr.com'
+# html = urllib.request.urlopen(url).read()
+# soup = BeautifulSoup(html, 'html.parser')
+
+# tags = soup('a')
+# for tag in tags:
+#     print(tag.get('href', None))
+
