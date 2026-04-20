@@ -44,6 +44,8 @@
             # urllib
             # html parsing - Web Scraping
             # urllinks
+# Chapter 13: Using Web Services
+            # XML and JSON
 
 
 
@@ -376,3 +378,5 @@ import urllib.request, urllib.parse, urllib.error
 # for tag in tags:
 #     print(tag.get('href', None))
 
+# Currently at 07:15:50
+# Currently at 07:34:00

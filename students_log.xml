@@ -1,0 +1,12 @@
+<students>
+    <student>
+        <name>Al-ameen</name>
+        <department>Computer Engineering</department>
+        <school>Yaba College of Technology</school>
+    </student>
+     <student>
+        <name>Asake</name>
+        <department>Computer Science</department>
+        <school>University of Lagos</school>
+    </student>
+</students>
