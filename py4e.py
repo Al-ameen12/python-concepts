@@ -46,6 +46,7 @@
             # urllinks
 # Chapter 13: Using Web Services
             # XML and JSON
+            # Javascript Object Notation (JSON))
 
 
 
@@ -380,3 +381,41 @@ import urllib.request, urllib.parse, urllib.error
 
 # Currently at 07:15:50
 # Currently at 07:34:00
+
+# JSON (JavaScript Object Notation)
+import json
+'''
+The two most important JSON functions:
+
+json.loads() — converts JSON string into a Python dictionary (loads = load string)
+json.dumps() — converts a Python dictionary into a JSON string (dumps = dump string)
+
+
+'''
+
+# data = '{"name": "Al-ameen", "role": "Software Developer", "location": "Lagos"}'
+
+# # person = json.loads(data)
+
+# # print(person['name'])
+# # print(person['role'])
+# # print(person['location'])
+
+# json_string = json.dumps(data)
+# print(json_string)
+# print(type(json_string))
+
+# Connects parts of what we have learned so far
+import urllib.request
+import json
+
+url = 'http://api.open-notify.org/astros.json'
+response = urllib.request.urlopen(url).read()
+data = json.loads(response)
+
+print("Number of people in space:", data['number'])
+for person in data['people']:
+    print(person['name'], "is on the", person['craft']) 
+
+# Currenctly at 07:58:16
+# Service Oriented Launch
