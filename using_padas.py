@@ -158,3 +158,52 @@ print(df[df['Price'] > avg])
 
 # total value of all products
 print("\nTotal market value:", df['Price'].sum())
+
+
+# Filtering Data using pandas
+# Import cars data
+import pandas as pd
+cars = pd.read_csv('cars.csv', index_col = 0)
+
+# Extract drives_right column as Series: dr
+dr = cars['drives_right']
+# print(dr)
+
+# Use dr to subset cars: sel
+sel = cars[dr]
+
+# Print sel
+print(sel)
+
+'''
+to be uploaded to csv file later
+ cars_per_cap        country  drives_right
+US            809  United States          True
+AUS           731      Australia         False
+JPN           588          Japan         False
+IN             18          India         False
+RU            200         Russia          True
+MOR            70        Morocco          True
+EG             45          Egypt          True
+     cars_per_cap        country  drives_right
+US            809  United States          True
+RU            200         Russia          True
+MOR            70        Morocco          True
+EG             45          Egypt          True
+'''
+
+# using  logical operation with pandas and numpy
+# Import cars data
+import pandas as pd
+cars = pd.read_csv('cars.csv', index_col = 0)
+
+# Import numpy, you'll need this
+import numpy as np
+
+# Create medium: observations with cars_per_cap between 100 and 500
+cpc = cars['cars_per_cap']
+between = np.logical_and(cpc > 100, cpc < 500)
+medium = cars[between]
+
+# Print medium
+print(medium)
