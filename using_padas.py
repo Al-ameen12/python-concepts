@@ -72,6 +72,7 @@ The 64 refers to how many bits are used to store the number. You'll also see:
 
 '''
 import pandas as pd
+import numpy as np
 
 # scores = pd.Series([45, 78, 62, 91, 55], 
 #                    index=['Al-ameen', 'Sara', 'Hassan', 'Lina', 'Omar'])
@@ -140,40 +141,40 @@ import pandas as pd
 
 # analysis on that Nigerian prices data:
 
-df = pd.read_csv('nigerian_prices.csv')
+# df = pd.read_csv('nigerian_prices.csv')
 
-# most expensive product
-print("Most expensive:", df.loc[df['Price'].idxmax(), 'Product'])
+# # most expensive product
+# print("Most expensive:", df.loc[df['Price'].idxmax(), 'Product'])
 
-# cheapest product
-print("Cheapest:", df.loc[df['Price'].idxmin(), 'Product'])
+# # cheapest product
+# print("Cheapest:", df.loc[df['Price'].idxmin(), 'Product'])
 
-# average price
-print("Average price:", df['Price'].mean())
+# # average price
+# print("Average price:", df['Price'].mean())
 
-# products above average price
-avg = df['Price'].mean()
-print("\nAbove average price:")
-print(df[df['Price'] > avg])
+# # products above average price
+# avg = df['Price'].mean()
+# print("\nAbove average price:")
+# print(df[df['Price'] > avg])
 
-# total value of all products
-print("\nTotal market value:", df['Price'].sum())
+# # total value of all products
+# print("\nTotal market value:", df['Price'].sum())
 
 
 # Filtering Data using pandas
 # Import cars data
-import pandas as pd
-cars = pd.read_csv('cars.csv', index_col = 0)
+# import pandas as pd
+# cars = pd.read_csv('cars.csv', index_col = 0)
 
-# Extract drives_right column as Series: dr
-dr = cars['drives_right']
-# print(dr)
+# # Extract drives_right column as Series: dr
+# dr = cars['drives_right']
+# # print(dr)
 
-# Use dr to subset cars: sel
-sel = cars[dr]
+# # Use dr to subset cars: sel
+# sel = cars[dr]
 
-# Print sel
-print(sel)
+# # Print sel
+# print(sel)
 
 '''
 to be uploaded to csv file later
@@ -194,16 +195,150 @@ EG             45          Egypt          True
 
 # using  logical operation with pandas and numpy
 # Import cars data
-import pandas as pd
-cars = pd.read_csv('cars.csv', index_col = 0)
+# import pandas as pd
+# cars = pd.read_csv('cars.csv', index_col = 0)
 
-# Import numpy, you'll need this
-import numpy as np
+# # Import numpy, you'll need this
+# import numpy as np
 
-# Create medium: observations with cars_per_cap between 100 and 500
-cpc = cars['cars_per_cap']
-between = np.logical_and(cpc > 100, cpc < 500)
-medium = cars[between]
+# # Create medium: observations with cars_per_cap between 100 and 500
+# cpc = cars['cars_per_cap']
+# between = np.logical_and(cpc > 100, cpc < 500)
+# medium = cars[between]
 
-# Print medium
-print(medium)
+# # Print medium
+# print(medium)
+
+# Filtering Data using multiple conditions
+# import pandas as pd
+
+# data = {
+#     'Product': ['Rice', 'Beans', 'Garri', 'Yam', 'Plantain'],
+#     'Price': [45000, 32000, 18000, 25000, 8000],
+#     'City': ['Lagos', 'Abuja', 'Kano', 'Lagos', 'PH']
+# }
+
+# df = pd.DataFrame(data)
+
+# # AND condition - price above 20000 AND city is Lagos
+# print(df[(df['Price'] > 20000) & (df['City'] == 'Lagos')])
+
+# # OR condition - price below 10000 OR city is Kano
+# print(df[(df['Price'] < 10000) | (df['City'] == 'Kano')])
+
+
+
+'''
+What is groupby?
+It groups your data by a category and lets you perform calculations on each group separately.
+Real life analogy — imagine you have sales data from 5 Nigerian cities. groupby() lets you say 
+"show me the average price per city" instead of calculating each city manually.
+'''
+
+# import pandas as pd
+
+# data = {
+#     'Product': ['Rice', 'Beans', 'Garri', 'Yam', 'Plantain', 'Rice', 'Beans'],
+#     'Price': [45000, 32000, 18000, 25000, 8000, 38000, 28000],
+#     'City': ['Lagos', 'Abuja', 'Kano', 'Lagos', 'PH', 'Kano', 'Lagos']
+# }
+
+# df = pd.DataFrame(data)
+
+# # average price per city
+# print(df.groupby('City')['Price'].mean())
+
+# # total price per city
+# print(df.groupby('City')['Price'].sum())
+
+# # count of products per city
+# print(df.groupby('City')['Product'].count())
+
+
+
+
+# How to handle missing data in pandas
+# import pandas as pd
+# import numpy as np
+
+# data = {
+#     'Product': ['Rice', 'Beans', 'Garri', 'Yam', 'Plantain'],
+#     'Price': [45000, np.nan, 18000, np.nan, 8000],
+#     'City': ['Lagos', 'Abuja', None, 'Lagos', 'PH']
+# }
+
+# df = pd.DataFrame(data)
+
+# check for missing values
+# print(df.isnull())
+
+# count missing values per column
+# print(df.isnull().sum())
+
+# fix missing values
+
+# Drop rows with missing values:
+# df_dropped = df.dropna()
+# print(df_dropped)
+
+# Fill missing values with something meaningful:
+
+# fill missing price with average price
+# df['Price'] = df['Price'].fillna(df['Price'].mean())
+
+# # fill missing city with unknown
+# df['City'] = df['City'].fillna('Unknown')
+
+# print(df)
+
+
+
+
+# merging DataFrames 
+
+# products = pd.DataFrame({
+#     'Product': ['Rice', 'Beans', 'Garri'],
+#     'Price': [45000, 32000, 18000]
+# })
+
+# availability = pd.DataFrame({
+#     'Product': ['Rice', 'Beans', 'Garri'],
+#     'City': ['Lagos', 'Abuja', 'Kano'],
+#     'Stock': [100, 50, 200]
+# })
+
+# merged = pd.merge(products, availability, on='Product')
+# print(merged)
+
+
+# using everything together(filtering, groupby, and missing values )
+data = {
+    'Product': ['Rice', 'Beans', 'Garri', 'Yam', 'Plantain', 
+                'Rice', 'Beans', 'Garri'],
+    'Price': [45000, 32000, 18000, 25000, 8000, 
+              38000, np.nan, 19000],
+    'City': ['Lagos', 'Abuja', 'Kano', 'Lagos', 
+             'PH', 'Kano', 'Lagos', None],
+    'Stock': [100, 50, 200, 75, 150, 80, 60, 90]
+}
+
+df = pd.DataFrame(data)
+
+# clean the data
+df['Price'] = df['Price'].fillna(df['Price'].mean())
+df['City'] = df['City'].fillna('Unknown')
+
+# analysis
+print("=== Market Analysis ===")
+print("\nAverage price per city:")
+print(df.groupby('City')['Price'].mean())
+
+print("\nTotal stock per city:")
+print(df.groupby('City')['Stock'].sum())
+
+print("\nProducts above average price:")
+print(df[df['Price'] > df['Price'].mean()][['Product', 'Price', 'City']])
+
+print("\nMost stocked city:")
+most_stocked = df.groupby('City')['Stock'].sum().idxmax()
+print(most_stocked)
