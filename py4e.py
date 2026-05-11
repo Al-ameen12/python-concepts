@@ -424,3 +424,12 @@ for person in data['people']:
 # Currently at 08:06:17
 
 # Application Programming Interface (API)
+'''
+NOTE:
+Api Rate limiting is a technique used to control the amount of incoming and outgoing traffic to or from a network. 
+It limits the number of requests a user can make to an API within a certain time frame, preventing abuse and ensuring 
+fair usage among users. This is often implemented by setting a maximum number of requests per minute, hour, or day, 
+and users who exceed this limit may receive an error response or be temporarily blocked from accessing the API.
+
+
+'''
