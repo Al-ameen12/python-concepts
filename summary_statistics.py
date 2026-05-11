@@ -95,3 +95,57 @@ sales_1_1 = sales.copy()
 # # Get the proportion of stores in each department and sort
 # dept_props_sorted = store_depts['department'].value_counts(sort=True, normalize=True)
 # print(dept_props_sorted)
+
+'''
+without using groupby, 
+calculate the proportion of total weekly sales for each store type (A, B, C) and print the result.
+'''
+
+# # Calc total weekly sales
+# sales_all = sales["weekly_sales"].sum()
+# # print(sales_all)
+
+# # Subset for type A stores, calc total weekly sales
+# sales_A = sales[sales["type"] == "A"]["weekly_sales"].sum()
+
+# # Subset for type B stores, calc total weekly sales
+# sales_B = sales[sales["type"] == "B"]["weekly_sales"].sum()
+
+# # Subset for type C stores, calc total weekly sales
+# sales_C = sales[sales["type"] == "C"]["weekly_sales"].sum()
+
+# # Get proportion for each type
+# sales_propn_by_type = [sales_A, sales_B, sales_C] / sales_all
+# print(sales_propn_by_type)
+
+
+'''
+Use .groupby
+'''
+# Group by type; calc total weekly sales
+sales_by_type = sales.groupby("type")["weekly_sales"].sum()
+# Get proportion for each type
+sales_propn_by_type = sales_by_type / sum(sales_by_type)
+print(sales_propn_by_type)
+
+# Group by type and is_holiday; calc total weekly sales
+sales_by_type_is_holiday = sales.groupby(['type', 'is_holiday'])['weekly_sales'].sum()
+print(sales_by_type_is_holiday)
+
+
+
+'''
+Multiple grouped summaries with .agg()
+'''
+
+# For each store type, aggregate weekly_sales: get min, max, mean, and median
+sales_stats = sales.groupby("type")["weekly_sales"].agg([min, max, "mean", "median"])
+
+# Print sales_stats
+print(sales_stats)
+
+# For each store type, aggregate unemployment and fuel_price_usd_per_l: get min, max, mean, and median
+unemp_fuel_stats = sales.groupby("type")[["unemployment", "fuel_price_usd_per_l"]].agg([min, max, "mean", "median"])
+
+# Print unemp_fuel_stats
+print(unemp_fuel_stats)
