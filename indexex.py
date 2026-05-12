@@ -131,3 +131,18 @@ it can take two arguments to let you subset by rows and columns.
 # # Use slicing in both directions at once
 # print(temperatures.iloc[:5, 2:4])
 
+'''
+Pivot tables
+'''
+# Convert the date column to datetime objects
+temperatures['date'] = pd.to_datetime(temperatures['date'])
+
+# Add a year column to temperatures
+temperatures['year'] = temperatures['date'].dt.year
+# print(temperatures.head())
+
+# Pivot avg_temp_c by country and city vs year
+temp_by_country_city_vs_year = temperatures.pivot_table(values = 'avg_temp_c', index = ['country', 'city'], columns = 'year')
+
+# See the result
+print(temp_by_country_city_vs_year)
