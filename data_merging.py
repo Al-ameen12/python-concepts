@@ -6,6 +6,7 @@ taxi_veh = pd.read_csv('taxi_vehicles.csv')
 
 wards = pd.read_csv('Chicago_wards.csv')
 census = pd.read_csv('Chicago_census.csv')
+zip_demo = pd.read_csv('zip_demo.csv')
 
 wards_altered = wards.copy()
 census_altered = census.copy()
@@ -13,6 +14,11 @@ census_altered = census.copy()
 
 licenses = pd.read_csv('licenses.csv')
 biz_owners = pd.read_csv('business_owners.csv')
+
+
+cal = pd.read_csv('cta_calendar.csv')
+ridership = pd.read_csv('cta_ridership.csv')
+stations = pd.read_csv('stations.csv')
 
 
 '''
@@ -73,15 +79,42 @@ Chicago wards and census data
 
 
 # Merge the licenses and biz_owners table on account
-licenses_owners = licenses.merge(biz_owners, on = 'account')
+# licenses_owners = licenses.merge(biz_owners, on = 'account')
 
-# Group the results by title then count the number of accounts
-counted_df = licenses_owners.groupby('title').agg({'account':'count'})
-# an alternative way to do the above is: 
-# counted_df = licenses_owners.groupby('title')['account'].count()
+# # Group the results by title then count the number of accounts
+# counted_df = licenses_owners.groupby('title').agg({'account':'count'})
+# # an alternative way to do the above is: 
+# # counted_df = licenses_owners.groupby('title')['account'].count()
 
-# Sort the counted_df in descending order
-sorted_df = counted_df.sort_values('account', ascending = False)
+# # Sort the counted_df in descending order
+# sorted_df = counted_df.sort_values('account', ascending = False)
 
-# Use .head() method to print the first few rows of sorted_df
-print(sorted_df.head())
+# # Use .head() method to print the first few rows of sorted_df
+# print(sorted_df.head())
+
+
+
+'''
+Merging Multiple DataFrames
+'''
+
+# Merge the ridership, cal, and stations tables
+ridership_cal_stations = ridership.merge(cal, on=['year','month','day']) \
+							.merge(stations, on='station_id')
+
+# Create a filter to filter ridership_cal_stations
+filter_criteria = ((ridership_cal_stations['month'] == 7) 
+                   & (ridership_cal_stations['day_type'] == 'Weekday') 
+                   & (ridership_cal_stations['station_name'] == 'Wilson'))
+
+# Use .loc and the filter to select for rides
+print(ridership_cal_stations.loc[filter_criteria, 'rides'].sum())
+
+
+
+# Merge licenses and zip_demo, on zip; and merge the wards on ward
+licenses_zip_ward = licenses.merge(zip_demo, on = 'zip') \
+            			.merge(wards, on = 'ward')
+
+# Print the results by alderman and show median income
+print(licenses_zip_ward.groupby('alderman').agg({'income':'median'}))
