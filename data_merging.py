@@ -7,6 +7,7 @@ taxi_veh = pd.read_csv('taxi_vehicles.csv')
 wards = pd.read_csv('Chicago_wards.csv')
 census = pd.read_csv('Chicago_census.csv')
 zip_demo = pd.read_csv('zip_demo.csv')
+land_use = pd.read_csv('land_use.csv')
 
 wards_altered = wards.copy()
 census_altered = census.copy()
@@ -99,22 +100,50 @@ Merging Multiple DataFrames
 '''
 
 # Merge the ridership, cal, and stations tables
-ridership_cal_stations = ridership.merge(cal, on=['year','month','day']) \
-							.merge(stations, on='station_id')
+# ridership_cal_stations = ridership.merge(cal, on=['year','month','day']) \
+# 							.merge(stations, on='station_id')
 
-# Create a filter to filter ridership_cal_stations
-filter_criteria = ((ridership_cal_stations['month'] == 7) 
-                   & (ridership_cal_stations['day_type'] == 'Weekday') 
-                   & (ridership_cal_stations['station_name'] == 'Wilson'))
+# # Create a filter to filter ridership_cal_stations
+# filter_criteria = ((ridership_cal_stations['month'] == 7) 
+#                    & (ridership_cal_stations['day_type'] == 'Weekday') 
+#                    & (ridership_cal_stations['station_name'] == 'Wilson'))
 
-# Use .loc and the filter to select for rides
-print(ridership_cal_stations.loc[filter_criteria, 'rides'].sum())
+# # Use .loc and the filter to select for rides
+# print(ridership_cal_stations.loc[filter_criteria, 'rides'].sum())
 
 
 
-# Merge licenses and zip_demo, on zip; and merge the wards on ward
-licenses_zip_ward = licenses.merge(zip_demo, on = 'zip') \
-            			.merge(wards, on = 'ward')
+# # Merge licenses and zip_demo, on zip; and merge the wards on ward
+# licenses_zip_ward = licenses.merge(zip_demo, on = 'zip') \
+#             			.merge(wards, on = 'ward')
 
-# Print the results by alderman and show median income
-print(licenses_zip_ward.groupby('alderman').agg({'income':'median'}))
+# # Print the results by alderman and show median income
+# print(licenses_zip_ward.groupby('alderman').agg({'income':'median'}))
+
+
+
+# Merge land_use and census and merge result with licenses including suffixes
+land_cen_lic = land_use.merge(census, on='ward') \
+                    .merge(licenses, on='ward', suffixes=('_cen','_lic'))
+
+# Group by ward, pop_2010, and vacant, then count the # of accounts
+pop_vac_lic = land_cen_lic.groupby(['ward','pop_2010','vacant'], 
+                                   as_index=False).agg({'account':'count'})
+
+# Sort pop_vac_lic and print the results
+sorted_pop_vac_lic = pop_vac_lic.sort_values(['vacant', 'account', 'pop_2010'], 
+                                             ascending= [False, True, False])
+
+# Print the top few rows of sorted_pop_vac_lic
+print(sorted_pop_vac_lic.head())
+
+
+
+
+'''
+left join
+That's fantastic work! If your goal is to enhance or enrich a dataset, 
+then you do not want to lose any of your original data. 
+A left join will do that by returning all of the rows of your left table, 
+while using an inner join may result in lost data if it does not exist in both tables.
+'''
