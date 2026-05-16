@@ -202,7 +202,7 @@ while using an inner join may result in lost data if it does not exist in both t
 # print(movies_and_scifi_only.shape)
 
 
-# # Use right join to merge the movie_to_genres and pop_movies tables
+# Use right join to merge the movie_to_genres and pop_movies tables
 # genres_movies = movies_genres.merge(pop_movies, how='right', 
 #                                       right_on = 'id', 
 #                                       left_on = 'movie_id')
@@ -273,3 +273,57 @@ merging a table to itself also known as self-join
 
 # print("\nOUTER:")
 # print(pd.merge(products, stock, on='Product', how='outer'))
+
+'''
+Advanced Merging and Concatenating
+Semi Join — keep only rows from the left table that have a match in the right table:
+
+Anti Join — keep only rows from the left table that have NO match in the right table:
+
+Filtering join is actually just the category name that covers both semi join and anti join. 
+They're called filtering joins because instead of combining columns from both tables — 
+they simply filter the left table based on whether a match exists in the right table.
+
+Regular joins → combine columns from both tables
+Filtering joins → only filter rows, keep only left table columns
+'''
+
+# products = pd.DataFrame({
+#     'Product': ['Rice', 'Beans', 'Garri', 'Yam'],
+#     'Price': [45000, 32000, 18000, 25000]
+# })
+
+# stock = pd.DataFrame({
+#     'Product': ['Rice', 'Beans', 'Plantain'],
+#     'Stock': [100, 50, 200]
+# })
+
+
+# # semi join
+# semi_join = products[products['Product'].isin(stock['Product'])]
+# print(semi_join)
+
+# # anti join
+# anti_join = products[~products['Product'].isin(stock['Product'])]
+# print(anti_join)
+
+
+registered = pd.DataFrame({
+    'Name': ['Al-ameen', 'Salmat', 'John', 'Amina', 'Emeka'],
+    'LGA': ['Lagos', 'Abuja', 'Kano', 'Lagos', 'PH']
+})
+
+voted = pd.DataFrame({
+    'Name': ['Al-ameen', 'John', 'Emeka'],
+    'Voted': [True, True, True]
+})
+
+# semi join - who voted
+voted_voters = registered[registered['Name'].isin(voted['Name'])]
+print("Voted:")
+print(voted_voters)
+
+# anti join - who didn't vote
+didnt_vote = registered[~registered['Name'].isin(voted['Name'])]
+print("\nDidn't vote:")
+print(didnt_vote)
