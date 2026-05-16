@@ -308,22 +308,68 @@ Filtering joins → only filter rows, keep only left table columns
 # print(anti_join)
 
 
-registered = pd.DataFrame({
-    'Name': ['Al-ameen', 'Salmat', 'John', 'Amina', 'Emeka'],
-    'LGA': ['Lagos', 'Abuja', 'Kano', 'Lagos', 'PH']
+# registered = pd.DataFrame({
+#     'Name': ['Al-ameen', 'Salmat', 'John', 'Amina', 'Emeka'],
+#     'LGA': ['Lagos', 'Abuja', 'Kano', 'Lagos', 'PH']
+# })
+
+# voted = pd.DataFrame({
+#     'Name': ['Al-ameen', 'John', 'Emeka'],
+#     'Voted': [True, True, True]
+# })
+
+# # semi join - who voted
+# voted_voters = registered[registered['Name'].isin(voted['Name'])]
+# print("Voted:")
+# print(voted_voters)
+
+# # anti join - who didn't vote
+# didnt_vote = registered[~registered['Name'].isin(voted['Name'])]
+# print("\nDidn't vote:")
+# print(didnt_vote)
+
+
+
+'''
+Concatenation
+'''
+# Concatenate the tracks
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Create three months of Nigerian sales data
+sales_jan = pd.DataFrame({
+    'product': ['Rice', 'Beans', 'Garri'],
+    'total': [45000, 32000, 18000]
 })
 
-voted = pd.DataFrame({
-    'Name': ['Al-ameen', 'John', 'Emeka'],
-    'Voted': [True, True, True]
+sales_feb = pd.DataFrame({
+    'product': ['Yam', 'Plantain', 'Rice'],
+    'total': [25000, 8000, 42000]
 })
 
-# semi join - who voted
-voted_voters = registered[registered['Name'].isin(voted['Name'])]
-print("Voted:")
-print(voted_voters)
+sales_mar = pd.DataFrame({
+    'product': ['Beans', 'Garri', 'Yam'],
+    'total': [30000, 20000, 28000]
+})
 
-# anti join - who didn't vote
-didnt_vote = registered[~registered['Name'].isin(voted['Name'])]
-print("\nDidn't vote:")
-print(didnt_vote)
+# Concatenate the tables and add month keys
+sales_jan_thr_mar = pd.concat([sales_jan, sales_feb, sales_mar],
+                               keys=['1Jan', '2Feb', '3Mar'])
+
+print("Combined sales data:")
+print(sales_jan_thr_mar)
+
+# Group by month and find average total sales per month
+avg_sales_by_month = sales_jan_thr_mar.groupby(level=0).agg({'total': 'mean'})
+
+print("\nAverage sales per month:")
+print(avg_sales_by_month)
+
+# Bar plot of average sales by month
+avg_sales_by_month.plot(kind='bar')
+plt.title('Average Monthly Sales - Nigerian Market')
+plt.xlabel('Month')
+plt.ylabel('Average Sales (NGN)')
+plt.tight_layout()
+plt.show()
