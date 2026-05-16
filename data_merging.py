@@ -123,6 +123,9 @@ Chicago wards and census data
 
 '''
 Merging Multiple DataFrames
+You use on= when the matching column has the exact same name in both tables. Pandas finds it automatically in both.
+
+left_on and right_on — when column names are different:
 '''
 
 # Merge the ridership, cal, and stations tables
@@ -213,15 +216,60 @@ while using an inner join may result in lost data if it does not exist in both t
 
 
 
-# Merge iron_1_actors to iron_2_actors on id with outer join using suffixes
-iron_1_and_2 = iron_1_actors.merge(iron_2_actors,
-                                     on = 'id',
-                                     how = 'outer',
-                                     suffixes=('_1', '_2'))
+# # Merge iron_1_actors to iron_2_actors on id with outer join using suffixes
+# iron_1_and_2 = iron_1_actors.merge(iron_2_actors,
+#                                      on = 'id',
+#                                      how = 'outer',
+#                                      suffixes=('_1', '_2'))
 
-# Create an index that returns true if name_1 or name_2 are null
-m = ((iron_1_and_2['name_1'].isnull()) | 
-     (iron_1_and_2['name_2'].isnull()))
+# # Create an index that returns true if name_1 or name_2 are null
+# m = ((iron_1_and_2['name_1'].isnull()) | 
+#      (iron_1_and_2['name_2'].isnull()))
 
-# Print the first few rows of iron_1_and_2
-print(iron_1_and_2[m].head())
+# # Print the first few rows of iron_1_and_2
+# print(iron_1_and_2[m].head())
+
+
+
+'''
+merging a table to itself also known as self-join
+'''
+
+
+# employees = pd.DataFrame({
+#     'employee_id': [1, 2, 3, 4, 5],
+#     'name': ['Al-ameen', 'Salmat', 'John', 'Amina', 'Emeka'],
+#     'manager_id': [3, 3, 5, 5, None]
+# })
+
+# print(employees)
+
+# self_joined = employees.merge( #LEFT copy of the table
+#     employees,                 #RIGHT copy of the table 
+#     left_on='manager_id',
+#     right_on='employee_id',
+#     suffixes=('_employee', '_manager')
+# )
+
+# print(self_joined[['name_employee', 'name_manager']])
+
+
+
+# products = pd.DataFrame({
+#     'Product': ['Rice', 'Beans', 'Garri', 'Yam'],
+#     'Price': [45000, 32000, 18000, 25000]
+# })
+
+# stock = pd.DataFrame({
+#     'Product': ['Rice', 'Beans', 'Plantain'],
+#     'Stock': [100, 50, 200]
+# })
+
+# print("INNER:")
+# print(pd.merge(products, stock, on='Product', how='inner'))
+
+# print("\nLEFT:")
+# print(pd.merge(products, stock, on='Product', how='left'))
+
+# print("\nOUTER:")
+# print(pd.merge(products, stock, on='Product', how='outer'))
