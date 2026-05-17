@@ -333,43 +333,78 @@ Filtering joins → only filter rows, keep only left table columns
 '''
 Concatenation
 '''
-# Concatenate the tracks
+# # Concatenate the tracks
+# import pandas as pd
+# import matplotlib.pyplot as plt
+
+# # Create three months of Nigerian sales data
+# sales_jan = pd.DataFrame({
+#     'product': ['Rice', 'Beans', 'Garri'],
+#     'total': [45000, 32000, 18000]
+# })
+
+# sales_feb = pd.DataFrame({
+#     'product': ['Yam', 'Plantain', 'Rice'],
+#     'total': [25000, 8000, 42000]
+# })
+
+# sales_mar = pd.DataFrame({
+#     'product': ['Beans', 'Garri', 'Yam'],
+#     'total': [30000, 20000, 28000]
+# })
+
+# # Concatenate the tables and add month keys
+# sales_jan_thr_mar = pd.concat([sales_jan, sales_feb, sales_mar],
+#                                keys=['1Jan', '2Feb', '3Mar'])
+
+# print("Combined sales data:")
+# print(sales_jan_thr_mar)
+
+# # Group by month and find average total sales per month
+# avg_sales_by_month = sales_jan_thr_mar.groupby(level=0).agg({'total': 'mean'})
+
+# print("\nAverage sales per month:")
+# print(avg_sales_by_month)
+
+# # Bar plot of average sales by month
+# avg_sales_by_month.plot(kind='bar')
+# plt.title('Average Monthly Sales - Nigerian Market')
+# plt.xlabel('Month')
+# plt.ylabel('Average Sales (NGN)')
+# plt.tight_layout()
+# plt.show()
+
+
+
+'''
+Why merge_ordered() instead of regular merge():
+merge_ordered() is specifically designed for time series data — 
+it keeps the data sorted by date automatically and supports fill methods like ffill. 
+Regular merge() doesn't have that capability.
+'''
 import pandas as pd
-import matplotlib.pyplot as plt
 
-# Create three months of Nigerian sales data
-sales_jan = pd.DataFrame({
-    'product': ['Rice', 'Beans', 'Garri'],
-    'total': [45000, 32000, 18000]
+# GDP data - reported yearly
+gdp = pd.DataFrame({
+    'year': [2018, 2019, 2020, 2021, 2022],
+    'gdp': [20500, 21400, 20900, 23000, 25500]
 })
 
-sales_feb = pd.DataFrame({
-    'product': ['Yam', 'Plantain', 'Rice'],
-    'total': [25000, 8000, 42000]
+# S&P500 data - reported by date
+sp500 = pd.DataFrame({
+    'date': [2018, 2019, 2020, 2021, 2022],
+    'returns': [0.12, 0.28, 0.16, 0.27, -0.19]
 })
 
-sales_mar = pd.DataFrame({
-    'product': ['Beans', 'Garri', 'Yam'],
-    'total': [30000, 20000, 28000]
-})
+# Use merge_ordered() to merge gdp and sp500, and forward fill missing values
+gdp_sp500 = pd.merge_ordered(gdp, sp500, left_on='year', right_on='date',
+                             how='left', fill_method='ffill')
 
-# Concatenate the tables and add month keys
-sales_jan_thr_mar = pd.concat([sales_jan, sales_feb, sales_mar],
-                               keys=['1Jan', '2Feb', '3Mar'])
+# Subset the gdp and returns columns
+gdp_returns = gdp_sp500[['gdp', 'returns']]
 
-print("Combined sales data:")
-print(sales_jan_thr_mar)
+print("Merged table:")
+print(gdp_sp500)
 
-# Group by month and find average total sales per month
-avg_sales_by_month = sales_jan_thr_mar.groupby(level=0).agg({'total': 'mean'})
-
-print("\nAverage sales per month:")
-print(avg_sales_by_month)
-
-# Bar plot of average sales by month
-avg_sales_by_month.plot(kind='bar')
-plt.title('Average Monthly Sales - Nigerian Market')
-plt.xlabel('Month')
-plt.ylabel('Average Sales (NGN)')
-plt.tight_layout()
-plt.show()
+print("\nCorrelation:")
+print(gdp_returns.corr())
