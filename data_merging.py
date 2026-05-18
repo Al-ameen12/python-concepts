@@ -511,41 +511,125 @@ By setting a specific seed value (in this case, 42), you ensure that the same se
 This is particularly useful when you want to share your code with others or when you want to debug your code, as it allows you to get the same results consistently.
 '''
 # Generate sample data
-np.random.seed(42)
+# np.random.seed(42)
 
-countries = ['Nigeria', 'Ghana', 'Kenya', 'Egypt']
-dates = [2019, 2020, 2021, 2022]
+# countries = ['Nigeria', 'Ghana', 'Kenya', 'Egypt']
+# dates = [2019, 2020, 2021, 2022]
 
-# GDP dataset
-gdp = pd.DataFrame({
-    'date': [2019, 2019, 2020, 2020, 2021, 2021, 2022, 2022],
-    'country': ['Nigeria', 'Ghana', 'Nigeria', 'Ghana', 
-                'Nigeria', 'Ghana', 'Nigeria', 'Ghana'],
-    'gdp_billions': np.random.uniform(50, 500, 8).round(2)
-})
+# # GDP dataset
+# gdp = pd.DataFrame({
+#     'date': [2019, 2019, 2020, 2020, 2021, 2021, 2022, 2022],
+#     'country': ['Nigeria', 'Ghana', 'Nigeria', 'Ghana', 
+#                 'Nigeria', 'Ghana', 'Nigeria', 'Ghana'],
+#     'gdp_billions': np.random.uniform(50, 500, 8).round(2)
+# })
 
-# Population dataset - notice missing rows to demonstrate ffill
-pop = pd.DataFrame({
-    'date': [2019, 2019, 2020, 2021, 2022, 2022],
-    'country': ['Nigeria', 'Ghana', 'Nigeria', 'Nigeria', 
-                'Nigeria', 'Ghana'],
-    'population_millions': np.random.uniform(10, 220, 6).round(2)
-})
+# # Population dataset - notice missing rows to demonstrate ffill
+# pop = pd.DataFrame({
+#     'date': [2019, 2019, 2020, 2021, 2022, 2022],
+#     'country': ['Nigeria', 'Ghana', 'Nigeria', 'Nigeria', 
+#                 'Nigeria', 'Ghana'],
+#     'population_millions': np.random.uniform(10, 220, 6).round(2)
+# })
 
-# print("GDP table:")
-# print(gdp)
+# # print("GDP table:")
+# # print(gdp)
 
-# print("\nPopulation table:")
-# print(pop)
+# # print("\nPopulation table:")
+# # print(pop)
 
-# # Merge gdp and pop on date and country with forward fill
-ctry_date = pd.merge_ordered(gdp, pop, on=['date', 'country'],
-                             fill_method='ffill')
+# # # Merge gdp and pop on date and country with forward fill
+# ctry_date = pd.merge_ordered(gdp, pop, on=['date', 'country'],
+#                              fill_method='ffill')
 
-# # Print ctry_date
-print("\nMerged table:")
-print(ctry_date)
+# # # Print ctry_date
+# print("\nMerged table:")
+# print(ctry_date)
 
-# # Check correlation between gdp and population
-print("\nCorrelation:")
-print(ctry_date[['gdp_billions', 'population_millions']].corr())
+# # # Check correlation between gdp and population
+# print("\nCorrelation:")
+# print(ctry_date[['gdp_billions', 'population_millions']].corr())
+
+
+
+'''
+Using merge_asof() to study stocks
+What merge_asof() actually does:
+It merges two tables based on the nearest matching key — not exact matches. 
+The keys must be sorted before merging.
+Think of it like this — you have stock prices recorded at slightly different times for different banks. 
+merge_asof() says "match each JPMorgan timestamp to the closest Wells Fargo timestamp" 
+rather than requiring exact time matches.
+
+What direction='nearest' means:
+Matches to the closest timestamp in either direction — before or after. 
+That's why it worked — it's the most flexible option.
+'''
+
+# Generate stock price data for three Nigerian banks
+# np.random.seed(42)
+
+# # Access Bank stock prices
+# access_times = pd.date_range(start='2023-01-01 09:00:00', 
+#                              periods=10, freq='1min')
+# access = pd.DataFrame({
+#     'date_time': access_times,
+#     'close': np.random.uniform(8.0, 12.0, 10).round(2),
+#     'volume': np.random.randint(100000, 500000, 10)
+# })
+
+# # GTBank stock prices - slightly different timestamps
+# gtb_times = pd.date_range(start='2023-01-01 09:00:30', 
+#                           periods=10, freq='1min')
+# gtb = pd.DataFrame({
+#     'date_time': gtb_times,
+#     'close': np.random.uniform(25.0, 35.0, 10).round(2),
+#     'volume': np.random.randint(200000, 600000, 10)
+# })
+
+# # Zenith Bank stock prices - slightly different timestamps
+# zenith_times = pd.date_range(start='2023-01-01 09:01:00', 
+#                              periods=10, freq='1min')
+# zenith = pd.DataFrame({
+#     'date_time': zenith_times,
+#     'close': np.random.uniform(20.0, 28.0, 10).round(2),
+#     'volume': np.random.randint(150000, 450000, 10)
+# })
+
+# print("Access Bank data:")
+# print(access.head())
+
+# print("\nGTBank data:")
+# print(gtb.head())
+
+# print("\nZenith Bank data:")
+# print(zenith.head())
+
+# # merge_asof() to merge access and gtb
+# access_gtb = pd.merge_asof(access, gtb, on='date_time',
+#                            suffixes=('', '_gtb'), direction='nearest')
+
+# # merge_asof() to merge access_gtb and zenith
+# access_gtb_zenith = pd.merge_asof(access_gtb, zenith, on='date_time',
+#                                    suffixes=('_access', '_zenith'), 
+#                                    direction='nearest')
+
+# print("\nMerged table:")
+# print(access_gtb_zenith.head())
+
+# # Compute price differences
+# price_diffs = access_gtb_zenith.diff()
+
+# # Plot price differences
+# price_diffs.plot(y=['close_access', 'close_gtb', 'close_zenith'])
+# plt.title('Nigerian Bank Stock Price Differences')
+# plt.xlabel('Time')
+# plt.ylabel('Price Difference (NGN)')
+# plt.tight_layout()
+# plt.show()
+
+# # Correlation between bank prices
+# print("\nPrice correlation between banks:")
+# print(access_gtb_zenith[['close_access', 
+#                           'close_gtb', 
+#                           'close_zenith']].corr())
