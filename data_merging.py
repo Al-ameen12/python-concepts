@@ -425,26 +425,26 @@ that has a .year attribute you can extract.
 '''
 
 # Generate large sample dataset
-np.random.seed(42)
-dates = pd.date_range(start='2010-01-01', end='2023-12-01', freq='MS')
+# np.random.seed(42)
+# dates = pd.date_range(start='2010-01-01', end='2023-12-01', freq='MS')
 
-# Inflation dataset - Consumer Price Index
-inflation = pd.DataFrame({
-    'date': dates,
-    'cpi': np.random.uniform(200, 320, len(dates)).round(2),
-    'inflation_rate': np.random.uniform(1.5, 9.5, len(dates)).round(2)
-})
+# # Inflation dataset - Consumer Price Index
+# inflation = pd.DataFrame({
+#     'date': dates,
+#     'cpi': np.random.uniform(200, 320, len(dates)).round(2),
+#     'inflation_rate': np.random.uniform(1.5, 9.5, len(dates)).round(2)
+# })
 
-# Unemployment dataset
-unemployment = pd.DataFrame({
-    'date': dates,
-    'unemployment_rate': np.random.uniform(3.5, 14.5, len(dates)).round(2),
-    'job_openings': np.random.randint(5000000, 12000000, len(dates))
-})
+# # Unemployment dataset
+# unemployment = pd.DataFrame({
+#     'date': dates,
+#     'unemployment_rate': np.random.uniform(3.5, 14.5, len(dates)).round(2),
+#     'job_openings': np.random.randint(5000000, 12000000, len(dates))
+# })
 
-# # Use merge_ordered() to merge inflation and unemployment with inner join
-inflation_unemploy = pd.merge_ordered(inflation, unemployment,
-                                      how='inner', on='date')
+# # # Use merge_ordered() to merge inflation and unemployment with inner join
+# inflation_unemploy = pd.merge_ordered(inflation, unemployment,
+#                                       how='inner', on='date')
 
 # # Print first 10 rows
 # print("Merged table (first 10 rows):")
@@ -494,3 +494,58 @@ inflation_unemploy = pd.merge_ordered(inflation, unemployment,
 # plt.ylabel('Unemployment Rate (%)')
 # plt.tight_layout()
 # plt.show()
+
+'''
+Demonstrate forward fill by Generating large Dataset with missing values
+
+OBSERVATIONS:
+Before merge — GDP table has 8 rows, population table has 6 rows. Population is missing some country/date combinations deliberately.
+After merge — notice rows where population was missing. fill_method='ffill' carries the last known population value forward to fill those gaps.
+The correlation — tells you whether larger population countries tend to have larger GDP in this dataset.
+
+
+ABOUT np.random.seed(42)
+Setting a random seed is a common practice in data science and machine learning to ensure reproducibility of results. 
+When you generate random numbers, they are typically based on an algorithm that produces a sequence of numbers that appear random. 
+By setting a specific seed value (in this case, 42), you ensure that the same sequence of random numbers is generated each time you run the code. 
+This is particularly useful when you want to share your code with others or when you want to debug your code, as it allows you to get the same results consistently.
+'''
+# Generate sample data
+np.random.seed(42)
+
+countries = ['Nigeria', 'Ghana', 'Kenya', 'Egypt']
+dates = [2019, 2020, 2021, 2022]
+
+# GDP dataset
+gdp = pd.DataFrame({
+    'date': [2019, 2019, 2020, 2020, 2021, 2021, 2022, 2022],
+    'country': ['Nigeria', 'Ghana', 'Nigeria', 'Ghana', 
+                'Nigeria', 'Ghana', 'Nigeria', 'Ghana'],
+    'gdp_billions': np.random.uniform(50, 500, 8).round(2)
+})
+
+# Population dataset - notice missing rows to demonstrate ffill
+pop = pd.DataFrame({
+    'date': [2019, 2019, 2020, 2021, 2022, 2022],
+    'country': ['Nigeria', 'Ghana', 'Nigeria', 'Nigeria', 
+                'Nigeria', 'Ghana'],
+    'population_millions': np.random.uniform(10, 220, 6).round(2)
+})
+
+# print("GDP table:")
+# print(gdp)
+
+# print("\nPopulation table:")
+# print(pop)
+
+# # Merge gdp and pop on date and country with forward fill
+ctry_date = pd.merge_ordered(gdp, pop, on=['date', 'country'],
+                             fill_method='ffill')
+
+# # Print ctry_date
+print("\nMerged table:")
+print(ctry_date)
+
+# # Check correlation between gdp and population
+print("\nCorrelation:")
+print(ctry_date[['gdp_billions', 'population_millions']].corr())
