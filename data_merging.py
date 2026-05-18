@@ -1,5 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 
 taxi_owners = pd.read_csv('taxi_owners.csv')
 taxi_veh = pd.read_csv('taxi_vehicles.csv')
@@ -381,30 +382,115 @@ Why merge_ordered() instead of regular merge():
 merge_ordered() is specifically designed for time series data — 
 it keeps the data sorted by date automatically and supports fill methods like ffill. 
 Regular merge() doesn't have that capability.
+
+forward fill: fill_method='ffill'
 '''
-import pandas as pd
 
-# GDP data - reported yearly
-gdp = pd.DataFrame({
-    'year': [2018, 2019, 2020, 2021, 2022],
-    'gdp': [20500, 21400, 20900, 23000, 25500]
+# # GDP data - reported yearly
+# gdp = pd.DataFrame({
+#     'year': [2018, 2019, 2020, 2021, 2022],
+#     'gdp': [20500, 21400, 20900, 23000, 25500]
+# })
+
+# # S&P500 data - reported by date
+# sp500 = pd.DataFrame({
+#     'date': [2018, 2019, 2020, 2021, 2022],
+#     'returns': [0.12, 0.28, 0.16, 0.27, -0.19]
+# })
+
+# # Use merge_ordered() to merge gdp and sp500, and forward fill missing values
+# gdp_sp500 = pd.merge_ordered(gdp, sp500, left_on='year', right_on='date',
+#                              how='left', fill_method='ffill')
+
+# # Subset the gdp and returns columns
+# gdp_returns = gdp_sp500[['gdp', 'returns']]
+
+# print("Merged table:")
+# print(gdp_sp500)
+
+# print("\nCorrelation:")
+# print(gdp_returns.corr())
+
+'''
+Generating a large sample dataset
+
+Different numpy function here — randint instead of uniform:
+
+uniform — generates decimal numbers
+randint — generates whole numbers only
+
+
+pd.DatetimeIndex() converts the date column into a datetime object 
+that has a .year attribute you can extract.
+'''
+
+# Generate large sample dataset
+np.random.seed(42)
+dates = pd.date_range(start='2010-01-01', end='2023-12-01', freq='MS')
+
+# Inflation dataset - Consumer Price Index
+inflation = pd.DataFrame({
+    'date': dates,
+    'cpi': np.random.uniform(200, 320, len(dates)).round(2),
+    'inflation_rate': np.random.uniform(1.5, 9.5, len(dates)).round(2)
 })
 
-# S&P500 data - reported by date
-sp500 = pd.DataFrame({
-    'date': [2018, 2019, 2020, 2021, 2022],
-    'returns': [0.12, 0.28, 0.16, 0.27, -0.19]
+# Unemployment dataset
+unemployment = pd.DataFrame({
+    'date': dates,
+    'unemployment_rate': np.random.uniform(3.5, 14.5, len(dates)).round(2),
+    'job_openings': np.random.randint(5000000, 12000000, len(dates))
 })
 
-# Use merge_ordered() to merge gdp and sp500, and forward fill missing values
-gdp_sp500 = pd.merge_ordered(gdp, sp500, left_on='year', right_on='date',
-                             how='left', fill_method='ffill')
+# # Use merge_ordered() to merge inflation and unemployment with inner join
+inflation_unemploy = pd.merge_ordered(inflation, unemployment,
+                                      how='inner', on='date')
 
-# Subset the gdp and returns columns
-gdp_returns = gdp_sp500[['gdp', 'returns']]
+# # Print first 10 rows
+# print("Merged table (first 10 rows):")
+# print(inflation_unemploy.head(10))
 
-print("Merged table:")
-print(gdp_sp500)
+# Print shape
+# print(f"\nDataset shape: {inflation_unemploy.shape}")
 
-print("\nCorrelation:")
-print(gdp_returns.corr())
+# # Print correlation
+# print("\nCorrelation matrix:")
+# print(inflation_unemploy[['cpi', 'inflation_rate', 
+#                            'unemployment_rate', 'job_openings']].corr())
+
+# # Plot scatter plot of unemployment_rate vs cpi
+# inflation_unemploy.plot(x='unemployment_rate', y='cpi', kind='scatter',
+#                         color='red', alpha=0.5)
+# plt.title('Unemployment Rate vs CPI (2010-2023)')
+# plt.xlabel('Unemployment Rate (%)')
+# plt.ylabel('Consumer Price Index')
+# plt.tight_layout()
+# plt.show()
+
+# # Plot scatter plot of inflation_rate vs unemployment_rate
+# inflation_unemploy.plot(x='unemployment_rate', y='inflation_rate', 
+#                         kind='scatter', color='blue', alpha=0.5)
+# plt.title('Unemployment Rate vs Inflation Rate (2010-2023)')
+# plt.xlabel('Unemployment Rate (%)')
+# plt.ylabel('Inflation Rate (%)')
+# plt.tight_layout()
+# plt.show()
+
+# Average CPI and unemployment per year
+# inflation_unemploy['year'] = pd.DatetimeIndex(inflation_unemploy['date']).year
+# yearly_avg = inflation_unemploy.groupby('year').agg({
+#     'cpi': 'mean',
+#     'inflation_rate': 'mean',
+#     'unemployment_rate': 'mean'
+# }).round(2)
+
+# print("\nYearly averages:")
+# print(yearly_avg)
+
+# # Bar plot of yearly average unemployment
+# yearly_avg['unemployment_rate'].plot(kind='bar', color='green')
+# plt.title('Average Yearly Unemployment Rate (2010-2023)')
+# plt.xlabel('Year')
+# plt.ylabel('Unemployment Rate (%)')
+# plt.tight_layout()
+# plt.show()
