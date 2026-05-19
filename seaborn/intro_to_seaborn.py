@@ -18,6 +18,7 @@ import pandas as pd
 
 
 student_data = pd.read_csv('seaborn/datasets/student-alcohol-consumption.csv')
+mpg = pd.read_csv('seaborn/datasets/mpg.csv')
 
 '''
 What is Seaborn first:
@@ -74,12 +75,59 @@ with study_time as the row facet.
 
 
 #  Adjust further to add subplots based on family support
-sns.relplot(x="G1", y="G3", 
-            data=student_data,
-            kind="scatter",
-            col = 'schoolsup', #subplot based on school support
-            col_order = ['yes', 'no'],
-            row="famsup",      #subplot based on family support
-            row_order=["yes", "no"])
+# sns.relplot(x="G1", y="G3", 
+#             data=student_data,
+#             kind="scatter",
+#             col = 'schoolsup', #subplot based on school support
+#             col_order = ['yes', 'no'],
+#             row="famsup",      #subplot based on family support
+#             row_order=["yes", "no"])
+
+
+
+# Create scatter plot of horsepower vs. mpg
+# sns.relplot(x="horsepower", y="mpg", 
+#             data=mpg, kind="scatter",
+#             hue = 'cylinders', 
+#             size="cylinders")
+
+
+
+# Create a scatter plot of acceleration vs. mpg
+# sns.relplot(data = mpg, kind = 'scatter', 
+#             x = 'acceleration', y = 'mpg', 
+#             hue = 'origin', style = 'origin')
+
+
+'''
+Line plots are used to visualize the relationship between two variables,
+Line plots are particularly useful for showing trends over time or continuous data.
+
+confidence intervals are shaded areas around the line that represent the uncertainty of the estimate.
+standard deviation (sd) is a measure of the amount of variation or dispersion in a set of values.
+'''
+# Create line plot
+
+# sns.relplot(x = 'model_year', y = 'mpg', data = mpg, kind = 'line')
+
+
+# Make the shaded area show the standard deviation
+# sns.relplot(x="model_year", y="mpg",
+#             data=mpg, kind="line", errorbar='sd') #without a ci
+
+
+# Create line plot of model year vs. horsepower
+# sns.relplot(data = mpg, x = 'model_year', 
+#             y = 'horsepower', kind = 'line', 
+#             errorbar = None)
+
+
+# Change to create subgroups for country of origin,  
+# Add markers and make each line have the same style
+sns.relplot(x="model_year", y="horsepower",
+            data=mpg, kind="line",
+            errorbar=None, style="origin",
+            hue="origin", markers = True,
+            dashes = False)
 # Show plot
 plt.show()
