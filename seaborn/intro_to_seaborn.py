@@ -54,9 +54,32 @@ Counts how many times each category appears in a column and displays it as bars.
 #                 hue_order = ['Rural', 'Urban'])
 
 # Create a dictionary mapping subgroup values to colors
-palette_colors = {'Rural': "green", 'Urban': "blue"}
+# palette_colors = {'Rural': "green", 'Urban': "blue"}
 
-# Create a count plot of school with location subgroups
-sns.countplot(data = student_data, x = 'school', hue = 'location', palette = palette_colors )
+# # Create a count plot of school with location subgroups
+# sns.countplot(data = student_data, x = 'school', hue = 'location', palette = palette_colors )
+# # Show plot
+# plt.show()
+
+
+'''
+Use relplot() to create a scatter plot of absences vs. final grade, 
+with study_time as the row facet.
+'''
+# Change to use relplot() instead of scatterplot()
+# sns.relplot(x="absences", y="G3", 
+#             data=student_data,
+#             kind="scatter", 
+#             row ="study_time",)
+
+
+#  Adjust further to add subplots based on family support
+sns.relplot(x="G1", y="G3", 
+            data=student_data,
+            kind="scatter",
+            col = 'schoolsup', #subplot based on school support
+            col_order = ['yes', 'no'],
+            row="famsup",      #subplot based on family support
+            row_order=["yes", "no"])
 # Show plot
 plt.show()
