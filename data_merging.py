@@ -633,3 +633,88 @@ That's why it worked — it's the most flexible option.
 # print(access_gtb_zenith[['close_access', 
 #                           'close_gtb', 
 #                           'close_zenith']].corr())
+
+'''
+Using .merge_asof() to create dataset of GDP and recession periods
+'''
+# # create dates
+# dates = pd.date_range(start='2000-01-01', periods=24, freq='QS')
+
+# # Generate GDP dataset - quarterly data
+# gdp = pd.DataFrame({
+#     'date': dates,
+#     'gdp': [
+#         10.2, 10.5, 10.8, 11.0, 11.2, 11.5,  # 2000-2001 growth
+#         11.3, 10.9, 10.5, 10.2, 10.0, 9.8,   # 2002-2003 recession
+#         10.1, 10.5, 10.9, 11.3, 11.8, 12.2,  # 2004-2005 recovery
+#         12.5, 12.8, 12.3, 11.8, 11.2, 10.8   # 2006-2007 recession
+#     ]
+# })
+
+# # Generate recession dataset
+# recession = pd.DataFrame({
+#     'date': dates,
+#     'econ_status': [
+#         'normal', 'normal', 'normal', 'normal', 'normal', 'normal',
+#         'normal', 'recession', 'recession', 'recession', 'recession', 'recession',
+#         'normal', 'normal', 'normal', 'normal', 'normal', 'normal',
+#         'normal', 'normal', 'recession', 'recession', 'recession', 'recession'
+#     ]
+# })
+
+# print("GDP table:")
+# print(gdp.head(10))
+
+# print("\nRecession table:")
+# print(recession.head(10))
+
+# Merge gdp and recession on date using merge_asof()
+# gdp_recession = pd.merge_asof(gdp, recession, on='date', direction='nearest')
+
+# print("\nMerged table:")
+# print(gdp_recession)
+
+# Create is_recession list using list comprehension
+# is_recession = ['r' if s == 'recession' else 'g' for s in gdp_recession['econ_status']]
+
+# print("\nColor list:")
+# print(is_recession)
+
+# # Plot bar chart of gdp vs date colored by recession status
+# gdp_recession['date'] = gdp_recession['date'].astype(str)
+# gdp_recession.plot( y='gdp', x='date', kind='bar', color=is_recession, rot=90)
+# plt.title('GDP vs Recession Periods (2000-2005)')
+# plt.xlabel('Date')
+# plt.ylabel('GDP (Trillions USD)')
+# plt.tight_layout()
+# plt.show()
+
+'''
+Using .melt() to unpivot a wide table of Nigerian unemployment rates by month
+'''
+# # Wide format - Nigerian unemployment rate by month
+# ur_wide = pd.DataFrame({
+#     'year': ['2019', '2020', '2021', '2022'],
+#     'Jan': [6.1, 7.2, 8.3, 7.1],
+#     'Feb': [6.3, 7.5, 8.1, 6.9],
+#     'Mar': [6.5, 7.8, 7.9, 6.7],
+#     'Apr': [6.2, 8.1, 7.6, 6.5],
+#     'May': [6.0, 8.4, 7.4, 6.3],
+#     'Jun': [5.9, 8.6, 7.2, 6.1]
+# })
+
+# # Unpivot everything besides the year column
+# ur_tall = ur_wide.melt(id_vars='year', var_name='month', value_name='unempl_rate')
+
+# # Create a date column using the month and year columns of ur_tall
+# ur_tall['date'] = pd.to_datetime(ur_tall['year'] + '-' + ur_tall['month'])
+
+# # Sort ur_tall by date in ascending order
+# ur_sorted = ur_tall.sort_values('date')
+
+# # Plot the unempl_rate by date
+# ur_sorted.plot(x='date', y='unempl_rate')
+# plt.title('Nigerian Unemployment Rate (2019-2022)')
+# plt.xlabel('Date')
+# plt.ylabel('Unemployment Rate (%)')
+# plt.show()
